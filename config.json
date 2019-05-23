@@ -1,16 +1,15 @@
 {
 "TEXT_DATA_DIR" : "data/",
-"GLOVE_DIR" : "data/glove",
+"GLOVE_DIR" : "data/glove.6B.100d.txt",
 "MAX_WORDS" : 10000,
 "MAX_SEQUENCE_LENGTH" : 1000,
 "VALIDATION_SPLIT" : 0.20,
 "EMBEDDING_DIM" : 100,
-"filter_size_1" : 3,
-"filter_size_2" : 4,
-"filter_size_3" : 5,
-"num_filters" : 512,
-"embedding_dim" : 100,
-"drop" : 0.5,
-"batch_size" : 30,
-"epochs" : 2
+"FILTER_SIZE_1" : 3,
+"FILTER_SIZE_2" : 4,
+"FILTER_SIZE_3" : 5,
+"NUM_FILTERS" : 512,
+"DROP" : 0.5,
+"BATCH_SIZE" : 30,
+"EPOCHS" : 2
 }

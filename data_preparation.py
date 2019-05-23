@@ -28,6 +28,7 @@ def clean_string(s,
                  to_lower=True,
                  replace_new_line=True,
                  remove_special_signs=True,
+                 remove_digits=True,
                  remove_stopwords=True):
     if to_lower:
         s = s.lower()
@@ -39,6 +40,9 @@ def clean_string(s,
         with open(stopwords_path, 'r') as f:
             stopwords = [line.rstrip('\n') for line in f]
         s = ' '.join([word for word in s.split() if word not in stopwords])
+    if remove_digits:
+        pass
+    # TODO: implement remove digits
     return s
 
 
