@@ -1,9 +1,10 @@
 {
-"TEXT_DATA_DIR" : "data/",
+"TEXT_DATA_PATH" : "data/processed_data.csv",
 "GLOVE_DIR" : "data/glove.6B.100d.txt",
 "MAX_WORDS" : 10000,
 "MAX_SEQUENCE_LENGTH" : 1000,
-"VALIDATION_SPLIT" : 0.20,
+"VALIDATION_SPLIT" : 0.8,
+"TEST_SAMPLES_NUM" : 500,
 "EMBEDDING_DIM" : 100,
 "FILTER_SIZE_1" : 3,
 "FILTER_SIZE_2" : 4,
