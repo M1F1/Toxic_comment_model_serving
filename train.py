@@ -6,7 +6,7 @@ from tensorflow import keras
 import time
 import json
 import sys
-
+import pickle
 
 assert sys.version_info >= (3, 5) # Python ≥3.5 required
 assert tf.__version__ >= "2.0"    # TensorFlow ≥2.0 required
@@ -21,6 +21,8 @@ labels = list(df['toxic'])
 tokenizer = keras.preprocessing.text.Tokenizer(num_words=config['MAX_WORDS'])
 tokenizer.fit_on_texts(texts)
 sequences = tokenizer.texts_to_sequences(texts)
+with open('tokenizer.pickle', 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 word_index = tokenizer.word_index
 print("unique words : {}".format(len(word_index)))
 

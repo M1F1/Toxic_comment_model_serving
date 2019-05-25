@@ -3,6 +3,10 @@ data
 models
 # idea
 .idea
+# pickles
+*.pickle
+# numpy pickles
+*.npy
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
