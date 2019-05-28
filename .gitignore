@@ -1,5 +1,8 @@
 # dirs 
-data
+data/train.csv
+data/glove.6B.100d.txt
+data/processed_data.csv
+data/test.txt
 models
 # idea
 .idea

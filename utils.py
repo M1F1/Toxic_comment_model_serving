@@ -88,8 +88,8 @@ if __name__ == '__main__':
     acc = query_for_answers(texts, labels, SERVER_URL)
     print(acc)
 
-    # p = model.predict(texts)
-    # print(p)
+    p = model.predict(texts)
+    print(p)
     # run docker sudo docker run -it --rm -p 8501:8501 -v "`pwd`/models/cnn:/models/cnn" -e MODEL_NAME=cnn tensorflow/serving
 
 
