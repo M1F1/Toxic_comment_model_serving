@@ -161,5 +161,5 @@ model_saved_path = os.path.join(model_path, 'model.h5')
 model.save(model_saved_path)
 tf.keras.backend.set_learning_phase(0) # Ignore dropout at inference
 model = tf.keras.models.load_model(model_saved_path)
-tf.keras.experimental.export_saved_model(model, os.path.join(model_path, 'tf_serving_model'))
+tf.keras.experimental.export_saved_model(model, os.path.join(model_path))
 
