@@ -5,8 +5,6 @@ data/processed_data.csv
 models
 # idea
 .idea
-# pickles
-*.pickle
 # numpy pickles
 *.npy
 # Byte-compiled / optimized / DLL files

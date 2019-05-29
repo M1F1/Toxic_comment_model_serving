@@ -7,9 +7,11 @@ import time
 import json
 import sys
 import pickle
-
-assert sys.version_info >= (3, 5) # Python ≥3.5 required
-assert tf.__version__ >= "2.0"    # TensorFlow ≥2.0 required
+from models_architectures import CNN
+# Python ≥3.5 required
+assert sys.version_info >= (3, 5)
+# TensorFlow ≥2.0 required
+assert tf.__version__ >= "2.0"
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -73,64 +75,8 @@ for word, i in word_index.items():
 
 print('Number of words in dictionary that have embeddings in glove:', in_glove)
 
-
-# setting up model architecture
-embedding_layer = keras.layers.Embedding(len(word_index) + 1,
-                                         config['EMBEDDING_DIM'],
-                                         weights=[embedding_matrix],
-                                         input_length=config['MAX_SEQUENCE_LENGTH'],
-                                         trainable=False)
-
-inputs = keras.layers.Input(shape=(config['MAX_SEQUENCE_LENGTH'],), dtype='int32')
-embedding = embedding_layer(inputs)
-print(embedding.shape)
-
-reshape = keras.layers.Reshape((config['MAX_SEQUENCE_LENGTH'], config['EMBEDDING_DIM'], 1))(embedding)
-print(reshape.shape)
-
-num_filters = config['NUM_FILTERS']
-embedding_dim = config['EMBEDDING_DIM']
-max_sequence_length = config['MAX_SEQUENCE_LENGTH']
-filter_size_1 = config['FILTER_SIZE_1']
-filter_size_2 = config['FILTER_SIZE_2']
-filter_size_3 = config['FILTER_SIZE_3']
-
-conv_0 = keras.layers.Conv2D(num_filters,
-                             kernel_size=(filter_size_1, embedding_dim),
-                             padding='valid',
-                             kernel_initializer='normal',
-                             activation='relu')(reshape)
-conv_1 = keras.layers.Conv2D(num_filters,
-                             kernel_size=(filter_size_2, embedding_dim),
-                             padding='valid',
-                             kernel_initializer='normal',
-                             activation='relu')(reshape)
-conv_2 = keras.layers.Conv2D(num_filters,
-                             kernel_size=(filter_size_3, embedding_dim),
-                             padding='valid',
-                             kernel_initializer='normal',
-                             activation='relu')(reshape)
-
-maxpool_0 = keras.layers.MaxPool2D(pool_size=(max_sequence_length - filter_size_1 + 1, 1),
-                                   strides=(1, 1),
-                                   padding='valid')(conv_0)
-maxpool_1 = keras.layers.MaxPool2D(pool_size=(max_sequence_length - filter_size_2 + 1, 1),
-                                   strides=(1, 1),
-                                   padding='valid')(conv_1)
-maxpool_2 = keras.layers.MaxPool2D(pool_size=(max_sequence_length - filter_size_3 + 1, 1),
-                                   strides=(1, 1),
-                                   padding='valid')(conv_2)
-
-concatenated_tensor = keras.layers.Concatenate(axis=1)([maxpool_0, maxpool_1, maxpool_2])
-flatten = keras.layers.Flatten()(concatenated_tensor)
-dropout = keras.layers.Dropout(config['DROP'])(flatten)
-output = keras.layers.Dense(units=2,
-                            activation='softmax')(dropout)
-
-# this creates a model that includes
-model = keras.models.Model(inputs=inputs,
-                           outputs=output)
-
+cnn = CNN(config=config, embedding_matrix=embedding_matrix, word_index=word_index)
+model = cnn.create_model()
 adam = keras.optimizers.Adam(lr=1e-4,
                              beta_1=0.9,
                              beta_2=0.999,
@@ -152,6 +98,7 @@ print("Evaluating Model...")
 model.evaluate(x_test, y_test)
 
 # Saving model to .h5 and converting to .pb for tf serving
+print("Serializing Model...")
 all_models_path = 'models'
 model_name = "cnn"
 model_version = int(time.time())

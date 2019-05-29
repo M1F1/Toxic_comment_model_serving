@@ -1,11 +1,32 @@
 import os
 import tensorflow as tf
 import json
-import pandas as pd
 import numpy as np
 import pickle
-from data_preparation import clean_string
 import requests
+import re
+
+
+def clean_string(s,
+                 stopwords_path,
+                 to_lower=True,
+                 replace_new_line=True,
+                 remove_special_signs=True,
+                 remove_digits=True,
+                 remove_stopwords=True):
+    if to_lower:
+        s = s.lower()
+    if replace_new_line:
+        s = s.replace('\n', '')
+    if remove_special_signs:
+        s = " ".join(re.findall(r"[a-zA-Z0-9]+", s))
+    if remove_stopwords:
+        with open(stopwords_path, 'r') as f:
+            stopwords = [line.rstrip('\n') for line in f]
+        s = ' '.join([word for word in s.split() if word not in stopwords])
+    if remove_digits:
+        s = re.sub(r"[0-9]+", '', s)
+    return s
 
 
 def query_for_answers(X_test, y_test, SERVER_URL, batch_size=16):
@@ -59,30 +80,20 @@ def prepare_texts(texts):
 
 if __name__ == '__main__':
 
+    # locally testing trained_model
     all_models_path = 'models'
     model_name = "cnn"
     model_path = os.path.join(all_models_path, model_name, '1558622633')
     model_saved_path = os.path.join(model_path, 'model.h5')
     model = tf.keras.models.load_model(model_saved_path)
     input_name = model.input_names[0]
-    model_tf_serving_path = os.path.join(model_path, 'tf_serving_model')
     print('input_name:', input_name)
-    print(model_tf_serving_path)
 
-    with open('config.json', 'r') as f:
-        config = json.load(f)
-
-    with open('tokenizer.pickle', 'rb') as handle:
-        tokenizer = pickle.load(handle)
-
-    print('tokenizer was loaded')
     stopwords_path = os.path.join(os.getcwd(), 'data', 'stopwords.txt')
-
 
     texts, labels = load_data()
     print(texts)
     texts = prepare_texts(texts)
-
 
     SERVER_URL = 'http://localhost:8501/v1/models/cnn:predict'
     acc = query_for_answers(texts, labels, SERVER_URL)
@@ -90,6 +101,5 @@ if __name__ == '__main__':
 
     p = model.predict(texts)
     print(p)
-    # run docker sudo docker run -it --rm -p 8501:8501 -v "`pwd`/models/cnn:/models/cnn" -e MODEL_NAME=cnn tensorflow/serving
 
 
