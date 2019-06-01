@@ -56,28 +56,49 @@ print('Shape of data test tensor:', x_test.shape)
 print('Shape of label test tensor:', y_test.shape)
 
 # create embeddings
+# create embeddings, UNK is the mean of all known vectors
+EMBEDDING_DIM = 100
+
 embeddings_index = {}
+UNK = np.zeros(EMBEDDING_DIM,)
 with open(os.path.join(config['GLOVE_DIR'])) as f:
     for line in f:
         values = line.split()
         word = values[0]
         coefs = np.asarray(values[1:], dtype='float32')
+        UNK = UNK + coefs
         embeddings_index[word] = coefs
 
+UNK = UNK / len(embeddings_index)
 print('Found %s word vectors.' % len(embeddings_index))
 in_glove = 0
 embedding_matrix = np.zeros((len(word_index) + 1, config['EMBEDDING_DIM']))
+not_in_glove = []
 for word, i in word_index.items():
     embedding_vector = embeddings_index.get(word)
     if embedding_vector is not None:
         in_glove += 1
         embedding_matrix[i] = embedding_vector
+    else:
+        not_in_glove.append(word)
+        embedding_matrix[i] = UNK
 
 print('Number of words in dictionary that have embeddings in glove:', in_glove)
 
+
+def lr_schedule(epoch):
+    lr = 1e-3
+    if epoch >= 6:
+        lr = 1e-5
+    elif epoch >= 3:
+        lr = 1e-4
+    print('Learning rate: ', lr)
+    return lr
+
+
 cnn = CNN(config=config, embedding_matrix=embedding_matrix, word_index=word_index)
 model = cnn.create_model()
-adam = keras.optimizers.Adam(lr=1e-4,
+adam = keras.optimizers.Adam(lr=lr_schedule(0),
                              beta_1=0.9,
                              beta_2=0.999,
                              epsilon=1e-08,
@@ -85,6 +106,7 @@ adam = keras.optimizers.Adam(lr=1e-4,
 
 model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 model.summary()
+lr_scheduler = tf.keras.callbacks.LearningRateScheduler(lr_schedule)
 
 print("Traning Model...")
 model.fit(x_train,
@@ -93,6 +115,7 @@ model.fit(x_train,
           epochs=config['EPOCHS'],
           verbose=1,
           validation_data=(x_val, y_val),
+          callbacks=[lr_scheduler]
           )
 print("Evaluating Model...")
 model.evaluate(x_test, y_test)
