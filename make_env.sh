@@ -1,6 +1,6 @@
 #!/bin/bash
 
-conda create --name tf_serving
+conda create --name tf_serving_test
 conda activate tf_serving
 conda install -c conda-forge tensorflow
 

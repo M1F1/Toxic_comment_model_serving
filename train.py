@@ -85,6 +85,7 @@ for word, i in word_index.items():
 
 print('Number of words in dictionary that have embeddings in glove:', in_glove)
 
+
 def lr_schedule(epoch):
     lr = 1e-3
     if epoch >= 6:
@@ -114,6 +115,7 @@ model.fit(x_train,
           epochs=config['EPOCHS'],
           verbose=1,
           validation_data=(x_val, y_val),
+          callbacks=[lr_scheduler]
           )
 print("Evaluating Model...")
 model.evaluate(x_test, y_test)

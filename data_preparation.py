@@ -8,12 +8,10 @@ if __name__ == '__main__':
     df['toxic'] = df.iloc[:, 2:].any(axis='columns').astype(int)
     del df['id']
     df = df.iloc[:, 0:2]
-
-
     print(df.head())
 
     # data_preprocessing
-    stopwords_path = os.path.join(os.getcwd(), 'stopwords.txt')
+    stopwords_path = os.path.join(os.getcwd(), 'data', 'stopwords.txt')
     df['comment_text'] = df['comment_text'].apply(lambda x: clean_string(x, stopwords_path))
 
     # save processed dataframe
