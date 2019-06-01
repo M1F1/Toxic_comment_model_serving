@@ -7,7 +7,7 @@ class CNN:
                                                  config['EMBEDDING_DIM'],
                                                  weights=[embedding_matrix],
                                                  input_length=config['MAX_SEQUENCE_LENGTH'],
-                                                 trainable=False)
+                                                 trainable=True)
 
         inputs = keras.layers.Input(shape=(config['MAX_SEQUENCE_LENGTH'],), dtype='int32')
         embedding = embedding_layer(inputs)
@@ -52,8 +52,11 @@ class CNN:
         concatenated_tensor = keras.layers.Concatenate(axis=1)([maxpool_0, maxpool_1, maxpool_2])
         flatten = keras.layers.Flatten()(concatenated_tensor)
         dropout = keras.layers.Dropout(config['DROP'])(flatten)
-        output = keras.layers.Dense(units=2,
-                                    activation='softmax')(dropout)
+        dense = keras.layers.Dense(units=246, activation='relu')(dropout)
+        norm = keras.layers.BatchNormalization()(dense)
+
+        output = keras.layers.Dense(units=2, activation='softmax')(norm)
+
         self.inputs = inputs
         self.output = output
 

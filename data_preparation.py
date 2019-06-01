@@ -9,11 +9,7 @@ if __name__ == '__main__':
     del df['id']
     df = df.iloc[:, 0:2]
 
-    # get balanced distribution
-    df_positive = df.loc[df['toxic'] == 1]
-    positive_count = df_positive.shape[0]
-    df_negative = df.loc[df['toxic'] == 0][:positive_count]
-    df = pd.concat([df_positive, df_negative])
+
     print(df.head())
 
     # data_preprocessing

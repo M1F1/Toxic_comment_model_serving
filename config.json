@@ -12,5 +12,5 @@
 "NUM_FILTERS" : 512,
 "DROP" : 0.5,
 "BATCH_SIZE" : 30,
-"EPOCHS" : 2
+"EPOCHS" : 8
 }
