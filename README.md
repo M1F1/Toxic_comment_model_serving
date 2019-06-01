@@ -3,7 +3,7 @@ To run client.py script:
  2. run client.py script with proper command line arguments
     (set test dataset file path, and separator beetween x's and y's, if is different than default sign -  ';')
  
-    python client.py <test.txt path> --separator <separator >
+    python client.py <test.txt path> --separator <separator_sign>
 
 
 
