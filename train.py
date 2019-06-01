@@ -61,7 +61,7 @@ EMBEDDING_DIM = 100
 
 embeddings_index = {}
 UNK = np.zeros(EMBEDDING_DIM,)
-with open(os.path.join(disc_path, config['GLOVE_DIR'])) as f:
+with open(os.path.join(config['GLOVE_DIR'])) as f:
     for line in f:
         values = line.split()
         word = values[0]
